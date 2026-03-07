@@ -67,7 +67,7 @@ public class LayoutManager : IEditorLayoutService
     public string SaveLayout()
     {
         if (_layout == null) return string.Empty;
-        var serializer = new DockSerializer(typeof(AvaloniaList<IDockable>));
+        var serializer = new DockSerializer(typeof(AvaloniaList<>));
         return serializer.Serialize(_layout);
     }
 
@@ -75,7 +75,7 @@ public class LayoutManager : IEditorLayoutService
     {
         if (string.IsNullOrEmpty(layoutData)) return;
         
-        var serializer = new DockSerializer(typeof(AvaloniaList<IDockable>));
+        var serializer = new DockSerializer(typeof(AvaloniaList<>));
         var newLayout = serializer.Deserialize<IRootDock>(layoutData);
         if (newLayout != null)
         {
