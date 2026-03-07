@@ -15,6 +15,8 @@ public class LayoutManager : IEditorLayoutService
     private IRootDock? _layout;
     private readonly Dictionary<string, IEditorWindow> _customWindows = new();
 
+    public event System.Action<IRootDock>? LayoutRefresh;
+
     public IFactory Factory => _factory;
     public IRootDock? Layout => _layout;
 
@@ -29,6 +31,22 @@ public class LayoutManager : IEditorLayoutService
         if (_layout != null)
         {
             _factory.InitLayout(_layout);
+        }
+    }
+
+    public void ApplyPreset(string preset)
+    {
+        var newLayout = _factory.CreateLayout(preset);
+        if (newLayout != null)
+        {
+            _layout = newLayout;
+            _factory.InitLayout(_layout);
+            
+            // Re-bind all existing windows to the new layout structure
+            RestoreCustomWindows(_customWindows.Values.ToList(), new Dictionary<string, string>());
+
+            // Notify UI to refresh
+            LayoutRefresh?.Invoke(_layout);
         }
     }
 
