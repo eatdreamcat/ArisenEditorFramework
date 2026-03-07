@@ -36,19 +36,19 @@ public class LayoutManager : IEditorLayoutService
     {
         _customWindows[window.Id] = window;
         
-        // Find documents pane or root to add
-        var docPane = _layout != null ? _factory.FindDockable(_layout, v => v is IDocumentDock) as IDocumentDock : null;
-        if (docPane != null)
+        // Find any tool dock or root to add
+        var toolDock = _layout != null ? _factory.FindDockable(_layout, v => v is IToolDock) as IToolDock : null;
+        if (toolDock != null)
         {
-            var document = new EditorWindowDocument(window)
+            var tool = new EditorWindowTool(window)
             {
                 Id = window.Id,
                 Title = window.Title
             };
             
-            _factory.AddDockable(docPane, document);
-            _factory.SetActiveDockable(document);
-            _factory.SetFocusedDockable(docPane, document);
+            _factory.AddDockable(toolDock, tool);
+            _factory.SetActiveDockable(tool);
+            _factory.SetFocusedDockable(toolDock, tool);
         }
     }
 
@@ -101,32 +101,35 @@ public class LayoutManager : IEditorLayoutService
             _customWindows[window.Id] = window;
             
             // Re-bind to existing Ava.Dock view models built from loaded JSON
-            var existingView = _layout != null ? _factory.FindDockable(_layout, v => v is EditorWindowDocument d && d.Id == window.Id) as EditorWindowDocument : null;
+            var existingView = _layout != null ? _factory.FindDockable(_layout, v => v is EditorWindowTool d && d.Id == window.Id) as EditorWindowTool : null;
             if (existingView != null)
             {
                 existingView.SetWindow(window);
             }
         }
     }
+
+    public IEditorWindow? GetWindow(string id)
+    {
+        return _customWindows.TryGetValue(id, out var window) ? window : null;
+    }
 }
 
-internal class EditorWindowDocument : Document
+public class EditorWindowTool : Tool
 {
     private IEditorWindow? _window;
     public object? WindowContent => _window?.GetContent();
 
-    public EditorWindowDocument(IEditorWindow window)
+    public EditorWindowTool(IEditorWindow window)
     {
         _window = window;
     }
     
     // Parameterless constructor needed for deserialization
-    public EditorWindowDocument() { }
+    public EditorWindowTool() { }
     
     public void SetWindow(IEditorWindow window)
     {
         _window = window;
-        // Raise PropertyChanged when content changes if we implement INotifyPropertyChanged
-        // but for now simple binding works for static content wrappers or reactive wrappers.
     }
 }

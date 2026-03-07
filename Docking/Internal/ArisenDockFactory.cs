@@ -16,7 +16,6 @@ namespace ArisenEditorFramework.Docking.Internal;
 internal class ArisenDockFactory : Factory
 {
     private IRootDock? _rootDock;
-    private IDocumentDock? _documentDock;
     private readonly LayoutManager _layoutManager;
 
     public ArisenDockFactory(LayoutManager layoutManager)
@@ -26,7 +25,8 @@ internal class ArisenDockFactory : Factory
 
     public override IRootDock CreateLayout()
     {
-        var viewport = new DocumentDocument { Id = "Viewport", Title = "Viewport" };
+        var toolbar = new ToolDocument { Id = "Toolbar", Title = "Toolbar" };
+        var viewport = new ToolDocument { Id = "Viewport", Title = "Viewport" };
         var hierarchy = new ToolDocument { Id = "Hierarchy", Title = "Hierarchy" };
         var inspector = new ToolDocument { Id = "Inspector", Title = "Inspector" };
         var console = new ToolDocument { Id = "Console", Title = "Console" };
@@ -38,67 +38,71 @@ internal class ArisenDockFactory : Factory
             ActiveDockable = viewport,
             VisibleDockables = CreateList<IDockable>
             (
-                new ProportionalDock
+                new ToolDock
                 {
                     Id = "LeftPane",
-                    Orientation = Orientation.Vertical,
                     ActiveDockable = hierarchy,
                     VisibleDockables = CreateList<IDockable>(hierarchy),
-                    Proportion = 0.2
+                    Proportion = 0.2,
+                    IsCollapsable = false
                 },
                 new ProportionalDockSplitter(),
-                _documentDock = new DocumentDock
+                new ToolDock
                 {
-                    Id = "DocumentsPane",
+                    Id = "CenterPane",
                     ActiveDockable = viewport,
                     VisibleDockables = CreateList<IDockable>(viewport),
-                    Proportion = 0.6
+                    Proportion = 0.6,
+                    IsCollapsable = false
                 },
                 new ProportionalDockSplitter(),
-                new ProportionalDock
+                new ToolDock
                 {
                     Id = "RightPane",
-                    Orientation = Orientation.Vertical,
                     ActiveDockable = inspector,
                     VisibleDockables = CreateList<IDockable>(inspector),
-                    Proportion = 0.2
+                    Proportion = 0.2,
+                    IsCollapsable = false
                 }
             )
         };
 
-        var rootDock = CreateRootDock();
-
-        rootDock.Id = "RootDock";
-        rootDock.Title = "RootDock";
-        rootDock.ActiveDockable = mainLayout;
-        rootDock.DefaultDockable = mainLayout;
-        rootDock.VisibleDockables = CreateList<IDockable>(mainLayout);
-
-        var bottomPane = new ProportionalDock
+        var bottomPane = new ToolDock
         {
             Id = "BottomPane",
-            Orientation = Orientation.Horizontal,
             ActiveDockable = console,
             VisibleDockables = CreateList<IDockable>(console),
-            Proportion = 0.25
+            Proportion = 0.25,
+            IsCollapsable = false
         };
 
         var windowLayout = new ProportionalDock
         {
             Id = "WindowLayout",
             Orientation = Orientation.Vertical,
-            ActiveDockable = mainLayout,
             VisibleDockables = CreateList<IDockable>
             (
+                new ToolDock
+                {
+                    Id = "ToolbarPane",
+                    ActiveDockable = toolbar,
+                    VisibleDockables = CreateList<IDockable>(toolbar),
+                    Proportion = 0.05,
+                    IsCollapsable = false
+                },
+                new ProportionalDockSplitter(),
                 mainLayout,
                 new ProportionalDockSplitter(),
                 bottomPane
             )
         };
 
-        rootDock.VisibleDockables = CreateList<IDockable>(windowLayout);
+        var rootDock = CreateRootDock();
+        rootDock.Id = "RootDock";
+        rootDock.Title = "RootDock";
         rootDock.ActiveDockable = windowLayout;
         rootDock.DefaultDockable = windowLayout;
+        rootDock.VisibleDockables = CreateList<IDockable>(windowLayout);
 
         _rootDock = rootDock;
         
