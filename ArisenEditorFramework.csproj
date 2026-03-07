@@ -16,4 +16,11 @@
     <PackageReference Include="Avalonia.ReactiveUI" Version="11.2.4" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.4" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\3rdparty\Ava.Dock\src\Dock.Avalonia\Dock.Avalonia.csproj" />
+    <ProjectReference Include="..\..\3rdparty\Ava.Dock\src\Dock.Model.Mvvm\Dock.Model.Mvvm.csproj" />
+    <ProjectReference Include="..\..\3rdparty\Ava.Dock\src\Dock.Model.ReactiveUI\Dock.Model.ReactiveUI.csproj" />
+    <ProjectReference Include="..\..\3rdparty\Ava.Dock\src\Dock.Serializer\Dock.Serializer.csproj" />
+  </ItemGroup>
 <PropertyGroup Condition="'$(Configuration)' == 'Debug'"><OutputPath>..\..\Projects\VisualStudio\EditorTest\Outputs\Debug\</OutputPath></PropertyGroup><PropertyGroup Condition="'$(Configuration)' == 'Release'"><OutputPath>..\..\Projects\VisualStudio\EditorTest\Outputs\Release\</OutputPath></PropertyGroup></Project>
