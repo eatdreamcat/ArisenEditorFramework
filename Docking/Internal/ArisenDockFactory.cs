@@ -31,49 +31,39 @@ internal class ArisenDockFactory : Factory
         var inspector = new ToolDocument { Id = "Inspector", Title = "Inspector" };
         var console = new ToolDocument { Id = "Console", Title = "Console" };
 
+        // Unified layout using ProportionalDocks and ToolDocks.
+        // We allow collapse (default) to support space fulfillment like Unity.
+        
         var mainLayout = new ProportionalDock
         {
             Id = "MainLayout",
             Orientation = Orientation.Horizontal,
-            ActiveDockable = viewport,
             VisibleDockables = CreateList<IDockable>
             (
                 new ToolDock
                 {
                     Id = "LeftPane",
-                    ActiveDockable = hierarchy,
-                    VisibleDockables = CreateList<IDockable>(hierarchy),
                     Proportion = 0.2,
-                    IsCollapsable = false
+                    ActiveDockable = hierarchy,
+                    VisibleDockables = CreateList<IDockable>(hierarchy)
                 },
                 new ProportionalDockSplitter(),
                 new ToolDock
                 {
                     Id = "CenterPane",
-                    ActiveDockable = viewport,
-                    VisibleDockables = CreateList<IDockable>(viewport),
                     Proportion = 0.6,
-                    IsCollapsable = false
+                    ActiveDockable = viewport,
+                    VisibleDockables = CreateList<IDockable>(viewport)
                 },
                 new ProportionalDockSplitter(),
                 new ToolDock
                 {
                     Id = "RightPane",
-                    ActiveDockable = inspector,
-                    VisibleDockables = CreateList<IDockable>(inspector),
                     Proportion = 0.2,
-                    IsCollapsable = false
+                    ActiveDockable = inspector,
+                    VisibleDockables = CreateList<IDockable>(inspector)
                 }
             )
-        };
-
-        var bottomPane = new ToolDock
-        {
-            Id = "BottomPane",
-            ActiveDockable = console,
-            VisibleDockables = CreateList<IDockable>(console),
-            Proportion = 0.25,
-            IsCollapsable = false
         };
 
         var windowLayout = new ProportionalDock
@@ -85,24 +75,31 @@ internal class ArisenDockFactory : Factory
                 new ToolDock
                 {
                     Id = "ToolbarPane",
-                    ActiveDockable = toolbar,
-                    VisibleDockables = CreateList<IDockable>(toolbar),
                     Proportion = 0.05,
-                    IsCollapsable = false
+                    ActiveDockable = toolbar,
+                    VisibleDockables = CreateList<IDockable>(toolbar)
                 },
                 new ProportionalDockSplitter(),
                 mainLayout,
                 new ProportionalDockSplitter(),
-                bottomPane
+                new ToolDock
+                {
+                    Id = "BottomPane",
+                    Proportion = 0.25,
+                    ActiveDockable = console,
+                    VisibleDockables = CreateList<IDockable>(console)
+                }
             )
         };
 
         var rootDock = CreateRootDock();
         rootDock.Id = "RootDock";
-        rootDock.Title = "RootDock";
         rootDock.ActiveDockable = windowLayout;
         rootDock.DefaultDockable = windowLayout;
         rootDock.VisibleDockables = CreateList<IDockable>(windowLayout);
+        
+        // The RootDock itself must NOT collapse so the window remains a valid drop target.
+        rootDock.IsCollapsable = false;
 
         _rootDock = rootDock;
         
@@ -131,4 +128,10 @@ internal class DocumentDocument : Document
 
 internal class ToolDocument : Tool
 {
+    public ToolDocument()
+    {
+        CanFloat = true;
+        CanClose = true;
+        CanPin = true;
+    }
 }

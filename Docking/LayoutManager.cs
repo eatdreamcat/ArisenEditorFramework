@@ -123,10 +123,18 @@ public class EditorWindowTool : Tool
     public EditorWindowTool(IEditorWindow window)
     {
         _window = window;
+        CanFloat = true;
+        CanClose = true;
+        CanPin = true;
     }
     
     // Parameterless constructor needed for deserialization
-    public EditorWindowTool() { }
+    public EditorWindowTool() 
+    {
+        CanFloat = true;
+        CanClose = true;
+        CanPin = true;
+    }
     
     public void SetWindow(IEditorWindow window)
     {
