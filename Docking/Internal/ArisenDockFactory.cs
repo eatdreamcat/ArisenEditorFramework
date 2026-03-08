@@ -30,6 +30,7 @@ internal class ArisenDockFactory : Factory
         var hierarchy = new ToolDocument { Id = "Hierarchy", Title = "Hierarchy" };
         var inspector = new ToolDocument { Id = "Inspector", Title = "Inspector" };
         var console = new ToolDocument { Id = "Console", Title = "Console" };
+        var assets = new ToolDocument { Id = "Assets", Title = "Assets" };
 
         IDockable content;
 
@@ -54,7 +55,7 @@ internal class ArisenDockFactory : Factory
                             new ProportionalDockSplitter(),
                             new ToolDock { Id = "CenterPane", Proportion = 0.5, ActiveDockable = viewport, VisibleDockables = CreateList<IDockable>(viewport) },
                             new ProportionalDockSplitter(),
-                            new ToolDock { Id = "BottomPane", Proportion = 0.2, ActiveDockable = console, VisibleDockables = CreateList<IDockable>(console) },
+                            new ToolDock { Id = "BottomPane", Proportion = 0.2, ActiveDockable = assets, VisibleDockables = CreateList<IDockable>(console, assets) },
                             new ProportionalDockSplitter(),
                             new ToolDock { Id = "RightPane", Proportion = 0.15, ActiveDockable = inspector, VisibleDockables = CreateList<IDockable>(inspector) }
                         )
@@ -84,7 +85,7 @@ internal class ArisenDockFactory : Factory
                         (
                             new ToolDock { Id = "LeftPane", Proportion = 0.3, ActiveDockable = hierarchy, VisibleDockables = CreateList<IDockable>(hierarchy) },
                             new ProportionalDockSplitter(),
-                            new ToolDock { Id = "BottomPane", Proportion = 0.4, ActiveDockable = console, VisibleDockables = CreateList<IDockable>(console) },
+                            new ToolDock { Id = "BottomPane", Proportion = 0.4, ActiveDockable = assets, VisibleDockables = CreateList<IDockable>(console, assets) },
                             new ProportionalDockSplitter(),
                             new ToolDock { Id = "RightPane", Proportion = 0.3, ActiveDockable = inspector, VisibleDockables = CreateList<IDockable>(inspector) }
                         )
@@ -97,6 +98,7 @@ internal class ArisenDockFactory : Factory
             var mainLayout = new ProportionalDock
             {
                 Id = "MainLayout",
+                Proportion = 0.7,
                 Orientation = Orientation.Horizontal,
                 IsCollapsable = false,
                 VisibleDockables = CreateList<IDockable>
@@ -120,7 +122,7 @@ internal class ArisenDockFactory : Factory
                     new ProportionalDockSplitter(),
                     mainLayout,
                     new ProportionalDockSplitter(),
-                    new ToolDock { Id = "BottomPane", Proportion = 0.25, ActiveDockable = console, VisibleDockables = CreateList<IDockable>(console) }
+                    new ToolDock { Id = "BottomPane", Proportion = 0.25, ActiveDockable = console, VisibleDockables = CreateList<IDockable>(console, assets) }
                 )
             };
         }

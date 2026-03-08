@@ -16,13 +16,13 @@
     <!-- Optional Toolbar for Add/Delete -->
     <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="4" Margin="4">
       <Button Command="{Binding AddRootItemCommand}" ToolTip.Tip="Add Root Item">
-        <PathIcon Data="{StaticResource AddIconData}" Width="12" Height="12"/>
+        <TextBlock Text="+" FontSize="14" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
       </Button>
       <Button Command="{Binding AddChildItemCommand}" ToolTip.Tip="Add Child Item">
-        <PathIcon Data="{StaticResource AddChildIconData}" Width="12" Height="12"/>
+        <TextBlock Text="+c" FontSize="10" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
       </Button>
       <Button Command="{Binding DeleteSelectedItemCommand}" ToolTip.Tip="Delete Item">
-        <PathIcon Data="{StaticResource DeleteIconData}" Width="12" Height="12"/>
+        <TextBlock Text="x" FontSize="14" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
       </Button>
     </StackPanel>
 
