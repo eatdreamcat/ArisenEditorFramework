@@ -1,0 +1,89 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:ArisenEditorFramework.Hierarchy"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="ArisenEditorFramework.Hierarchy.HierarchyControl"
+             x:DataType="local:HierarchyViewModel">
+
+  <UserControl.Resources>
+    <!-- We need a Drag/Drop format handler if we do complex dragging -->
+  </UserControl.Resources>
+
+  <Grid RowDefinitions="Auto,*">
+    
+    <!-- Optional Toolbar for Add/Delete -->
+    <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="4" Margin="4">
+      <Button Command="{Binding AddRootItemCommand}" ToolTip.Tip="Add Root Item">
+        <PathIcon Data="{StaticResource AddIconData}" Width="12" Height="12"/>
+      </Button>
+      <Button Command="{Binding AddChildItemCommand}" ToolTip.Tip="Add Child Item">
+        <PathIcon Data="{StaticResource AddChildIconData}" Width="12" Height="12"/>
+      </Button>
+      <Button Command="{Binding DeleteSelectedItemCommand}" ToolTip.Tip="Delete Item">
+        <PathIcon Data="{StaticResource DeleteIconData}" Width="12" Height="12"/>
+      </Button>
+    </StackPanel>
+
+    <!-- The Tree View -->
+    <TreeView Grid.Row="1" 
+              ItemsSource="{Binding Items}" 
+              SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+              SelectionMode="Single"
+              DragDrop.AllowDrop="True"
+              x:Name="MainTreeView">
+              
+      <TreeView.KeyBindings>
+          <KeyBinding Gesture="F2" Command="{Binding RenameSelectedItemCommand}" />
+          <KeyBinding Gesture="Delete" Command="{Binding DeleteSelectedItemCommand}" />
+      </TreeView.KeyBindings>
+
+      <TreeView.ItemTemplate>
+        <TreeDataTemplate DataType="{x:Type local:IHierarchyItem}" ItemsSource="{Binding Children}">
+          <!-- Context menu for operations -->
+          <StackPanel Orientation="Horizontal" Background="Transparent" 
+                      Margin="2,0" 
+                      Spacing="4"
+                      ToolTip.Tip="{Binding Name}"
+                      PointerPressed="OnItemPointerPressed"
+                      PointerMoved="OnItemPointerMoved"
+                      PointerReleased="OnItemPointerReleased">
+            
+            <StackPanel.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Add Child" Command="{Binding $parent[UserControl].((local:HierarchyViewModel)DataContext).AddChildItemCommand}" />
+                    <MenuItem Header="Rename (F2)" Command="{Binding BeginRenameCommand}" />
+                    <MenuItem Header="Delete (Del)" Command="{Binding DeleteCommand}" />
+                </ContextMenu>
+            </StackPanel.ContextMenu>
+
+            <!-- Icon -->
+            <Image Source="{Binding Icon}" Width="16" Height="16" IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+            
+            <!-- Standard Text Display -->
+            <TextBlock Text="{Binding Name}" 
+                       VerticalAlignment="Center" 
+                       IsVisible="{Binding !IsEditing}" 
+                       DoubleTapped="OnItemDoubleTapped" />
+
+            <!-- Editing Text Display -->
+            <TextBox Text="{Binding Name}" 
+                     IsVisible="{Binding IsEditing}" 
+                     VerticalAlignment="Center"
+                     KeyDown="OnTextBoxKeyDown"
+                     LostFocus="OnTextBoxLostFocus"
+                     x:Name="EditTextBox"/>
+          </StackPanel>
+        </TreeDataTemplate>
+      </TreeView.ItemTemplate>
+        
+      <!-- Style the TreeViewItem to bind IsExpanded -->
+      <TreeView.Styles>
+        <Style Selector="TreeViewItem" x:DataType="local:IHierarchyItem">
+          <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+        </Style>
+      </TreeView.Styles>
+    </TreeView>
+  </Grid>
+</UserControl>
