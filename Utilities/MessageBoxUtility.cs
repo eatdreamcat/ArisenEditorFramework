@@ -17,12 +17,13 @@ namespace ArisenEditorFramework.Utilities
                 @enum);
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                if (desktop.MainWindow != null)
+                if (desktop.MainWindow != null && desktop.MainWindow.IsVisible)
                 {
                     await box.ShowWindowDialogAsync(desktop.MainWindow);
                 }
                 else 
                 {
+                    // Fallback to non-dialog show if window is missing or not visible
                     await box.ShowAsync();
                 }
             }

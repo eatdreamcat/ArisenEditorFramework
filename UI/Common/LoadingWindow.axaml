@@ -10,7 +10,7 @@
     <Border BorderBrush="#282e39" BorderThickness="1">
         <Grid RowDefinitions="*, Auto">
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="20">
-                <Image Source="/Assets/arisen-logo.png" Width="80" Height="80" />
+                <Image Source="/Resources/arisen-logo.png" Width="80" Height="80" />
                 <TextBlock Name="StageText" Text="Initializing Arisen Engine..." Foreground="White" FontSize="16" HorizontalAlignment="Center" />
                 <TextBlock Name="StatusText" Text="Loading core modules..." Foreground="#5c6b89" FontSize="12" HorizontalAlignment="Center" />
             </StackPanel>
