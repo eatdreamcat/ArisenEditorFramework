@@ -18,6 +18,9 @@ public static class PropertyEditorRegistry
         RegisterEditor(new NumericPropertyEditor());
         RegisterEditor(new EnumPropertyEditor());
         RegisterEditor(new FlagPropertyEditor());
+        RegisterEditor(new StringPropertyEditor());
+        RegisterEditor(new Vector3PropertyEditor());
+        RegisterEditor(new ColorPropertyEditor());
         RegisterEditor(new ObjectReferencePropertyEditor());
     }
 
