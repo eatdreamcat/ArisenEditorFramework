@@ -15,9 +15,16 @@ namespace ArisenEditorFramework.Utilities
             var box = MessageBoxManager
             .GetMessageBoxStandard(title, text,
                 @enum);
-            if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                await box.ShowWindowDialogAsync(desktop.MainWindow);
+                if (desktop.MainWindow != null)
+                {
+                    await box.ShowWindowDialogAsync(desktop.MainWindow);
+                }
+                else 
+                {
+                    await box.ShowAsync();
+                }
             }
             else
             {

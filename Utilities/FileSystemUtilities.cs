@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 
@@ -23,8 +24,37 @@ public static class FileSystemUtilities
                     AllowMultiple = false,
             };
 
-            var selected = await desktop.MainWindow.StorageProvider.OpenFolderPickerAsync(options);
-            return selected.Select(v => v.Path.LocalPath).ToList();
+            var owner = desktop.MainWindow;
+            bool createdWindow = false;
+            
+            // If No MainWindow exists (e.g. during startup), we need a temporary window to host the picker.
+            if (owner == null)
+            {
+                owner = new Window() 
+                { 
+                    Opacity = 0, 
+                    Width = 1, 
+                    Height = 1, 
+                    WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                    SystemDecorations = SystemDecorations.None,
+                    ShowInTaskbar = false
+                };
+                owner.Show();
+                createdWindow = true;
+            }
+
+            try 
+            {
+                var selected = await owner.StorageProvider.OpenFolderPickerAsync(options);
+                return selected?.Select(v => v.Path.LocalPath).ToList() ?? new List<string>();
+            }
+            finally 
+            {
+                if (createdWindow) 
+                {
+                    owner.Close();
+                }
+            }
         }
 
         return null;
