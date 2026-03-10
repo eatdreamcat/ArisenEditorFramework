@@ -11,7 +11,7 @@ public class Bootstrapper
 
     public void AddStep(IBootStep step) => _steps.Add(step);
 
-    public async Task<BootContext> RunAsync(string projectPath)
+    public async Task<BootContext> RunAsync(string projectPath, Action<IBootStep> callback = null)
     {
         var context = new BootContext { ProjectPath = projectPath };
         double totalSteps = _steps.Count;
@@ -24,6 +24,7 @@ public class Bootstrapper
 
             try
             {
+                callback?.Invoke(step);
                 await step.ExecuteAsync(context);
                 if (!context.Success) break;
             }
