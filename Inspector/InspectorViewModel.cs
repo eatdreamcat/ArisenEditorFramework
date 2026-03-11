@@ -35,6 +35,14 @@ public class InspectorViewModel : ReactiveObject
 
     private void RebuildProperties()
     {
+        // Dispose existing property view models to unsubscribe event handlers and prevent leaks.
+        foreach (var category in Categories)
+        {
+            foreach (var prop in category.Properties)
+            {
+                prop.Dispose();
+            }
+        }
         Categories.Clear();
 
         if (_targetObject == null)

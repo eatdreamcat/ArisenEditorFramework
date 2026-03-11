@@ -87,9 +87,9 @@ public class AssetBrowserViewModel : ReactiveObject
                 Items.Add(entry);
             }
         }
-        catch (Exception)
-        {
-            // Handle access denied etc.
+        catch (Exception ex) 
+        { 
+            System.Diagnostics.Debug.WriteLine($"[AssetBrowser] Failed to access directory '{CurrentPath}': {ex.Message}");
         }
     }
 

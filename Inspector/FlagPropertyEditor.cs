@@ -47,19 +47,21 @@ public class FlagPropertyEditor : IPropertyEditor
             var currentVal = (Enum?)property.Value;
             cb.IsChecked = currentVal?.HasFlag(val) ?? false;
             
-            cb.Checked += (s, e) => {
-                var v = (Enum)property.Value!;
-                var underlyingType = Enum.GetUnderlyingType(enumType);
-                var result = Convert.ToUInt64(v) | Convert.ToUInt64(val);
-                property.Value = Enum.ToObject(enumType, result);
-                UpdateButtonText();
-            };
-            
-            cb.Unchecked += (s, e) => {
-                var v = (Enum)property.Value!;
-                var result = Convert.ToUInt64(v) & ~Convert.ToUInt64(val);
-                property.Value = Enum.ToObject(enumType, result);
-                UpdateButtonText();
+            cb.IsCheckedChanged += (s, e) => {
+                if (cb.IsChecked == true)
+                {
+                    var v = (Enum)property.Value!;
+                    var result = Convert.ToInt64(v) | Convert.ToInt64(val);
+                    property.Value = Enum.ToObject(enumType, result);
+                    UpdateButtonText();
+                }
+                else
+                {
+                    var v = (Enum)property.Value!;
+                    var result = Convert.ToInt64(v) & ~Convert.ToInt64(val);
+                    property.Value = Enum.ToObject(enumType, result);
+                    UpdateButtonText();
+                }
             };
             
             panel.Children.Add(cb);

@@ -157,10 +157,6 @@ internal class ArisenDockFactory : Factory
     }
 }
 
-internal class DocumentDocument : Document
-{
-}
-
 internal class ToolDocument : Tool
 {
     public ToolDocument()

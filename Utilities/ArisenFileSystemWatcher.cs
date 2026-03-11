@@ -6,11 +6,17 @@ namespace ArisenEditorFramework.Utilities;
 
 public partial class ArisenFileSystemWatcher : IDisposable
 {
-    public static Action<object, FileSystemEventArgs>? Changed;
-    public static Action<object, RenamedEventArgs>? Renamed;
-    public static Action<object, FileSystemEventArgs>? Created;
-    public static Action<object, FileSystemEventArgs>? Deleted;
-    public static Action<object, ErrorEventArgs>? Errored;
+    /// <summary>
+    /// The currently active file system watcher instance for the project.
+    /// Set by MainEditorHostView when the editor opens.
+    /// </summary>
+    public static ArisenFileSystemWatcher? Current { get; set; }
+    
+    public Action<object, FileSystemEventArgs>? Changed;
+    public Action<object, RenamedEventArgs>? Renamed;
+    public Action<object, FileSystemEventArgs>? Created;
+    public Action<object, FileSystemEventArgs>? Deleted;
+    public Action<object, ErrorEventArgs>? Errored;
 
     private FileSystemWatcher? m_Watcher;
 
@@ -49,5 +55,13 @@ public partial class ArisenFileSystemWatcher : IDisposable
             m_Watcher.Dispose();
             m_Watcher = null;
         }
+        
+        // Clear all event subscribers to prevent leaks
+        Changed = null;
+        Renamed = null;
+        Created = null;
+        Deleted = null;
+        Errored = null;
     }
 }
+

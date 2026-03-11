@@ -91,10 +91,7 @@ public class HierarchyItemViewModel : ReactiveObject, IHierarchyItem
 
         DeleteCommand = ReactiveCommand.Create(() => {
             RequestDelete?.Invoke(this, this);
-            if (Parent != null)
-            {
-                Parent.Children.Remove(this);
-            }
+            // Removal from parent.Children is handled by the parent's RequestDelete handler.
         });
     }
 

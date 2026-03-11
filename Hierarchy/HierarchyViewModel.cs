@@ -106,6 +106,10 @@ public class HierarchyViewModel : ReactiveObject
          {
              Items.Remove(item);
          }
+         else
+         {
+             item.Parent.Children.Remove(item);
+         }
          if (SelectedItem == item)
          {
              SelectedItem = null;

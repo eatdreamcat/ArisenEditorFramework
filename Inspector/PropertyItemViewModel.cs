@@ -8,11 +8,14 @@ namespace ArisenEditorFramework.Inspector;
 /// <summary>
 /// Represents a single editable property discovered via reflection.
 /// Binds to a specific PropertyInfo of a given Target object.
+/// Implements IDisposable to clean up event subscriptions and prevent memory leaks.
 /// </summary>
-public class PropertyItemViewModel : ReactiveObject
+public class PropertyItemViewModel : ReactiveObject, IDisposable
 {
     private readonly PropertyInfo _propertyInfo;
     private readonly object _target;
+    private readonly PropertyChangedEventHandler? _targetPropertyChangedHandler;
+    private bool _disposed;
 
     public string PropertyName { get; }
     public string DisplayName { get; }
@@ -104,16 +107,28 @@ public class PropertyItemViewModel : ReactiveObject
             Category = cat.Category;
         }
         
-        // If the property implements INotifyPropertyChanged, we could optionally subscribe here
-        // to update the UI if the property is modified outside the inspector.
+        // Subscribe to target's PropertyChanged using a stored handler so we can unsubscribe later.
         if (_target is INotifyPropertyChanged npc)
         {
-             npc.PropertyChanged += (s, e) => {
+             _targetPropertyChangedHandler = (s, e) => {
                  if (e.PropertyName == PropertyName)
                  {
                      this.RaisePropertyChanged(nameof(Value));
                  }
              };
+             npc.PropertyChanged += _targetPropertyChangedHandler;
+        }
+    }
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+        _disposed = true;
+
+        if (_targetPropertyChangedHandler != null && _target is INotifyPropertyChanged npc)
+        {
+            npc.PropertyChanged -= _targetPropertyChangedHandler;
         }
     }
 }
+

@@ -90,7 +90,7 @@ public class Vector3PropertyEditor : IPropertyEditor
     public bool CanHandle(PropertyItemViewModel property) 
     {
         var type = property.PropertyType;
-        return type.Name == "Vector3" || type.Name == "System.Numerics.Vector3";
+        return type.Name == "Vector3" || type.FullName == "System.Numerics.Vector3";
     }
 
     public Control CreateControl(PropertyItemViewModel property)
@@ -119,7 +119,7 @@ public class ColorPropertyEditor : IPropertyEditor
     public bool CanHandle(PropertyItemViewModel property) 
     {
         var type = property.PropertyType;
-        return type.Name == "Color" || type.Name == "System.Drawing.Color" || type.Name == "Avalonia.Media.Color";
+        return type.Name == "Color" || type.FullName == "System.Drawing.Color" || type.FullName == "Avalonia.Media.Color";
     }
 
     public Control CreateControl(PropertyItemViewModel property)

@@ -99,6 +99,12 @@ public class LayoutManager : IEditorLayoutService
         {
             _layout = newLayout;
             _factory.InitLayout(_layout);
+            
+            // Re-bind existing custom windows to the new layout structure
+            RestoreCustomWindows(_customWindows.Values.ToList(), new Dictionary<string, string>());
+            
+            // Notify UI to refresh
+            LayoutRefresh?.Invoke(_layout);
         }
     }
     

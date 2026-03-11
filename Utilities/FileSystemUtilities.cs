@@ -57,7 +57,7 @@ public static class FileSystemUtilities
             }
         }
 
-        return null;
+        return new List<string>();
     }
     
     public static string GetCurrentProjectRoot()

@@ -7,6 +7,9 @@ namespace ArisenEditorFramework.Assets;
 
 public partial class AssetBrowserControl : UserControl
 {
+    private Avalonia.Point _dragStartPoint;
+    private bool _isPointerPressed = false;
+
     public AssetBrowserControl()
     {
         InitializeComponent();
@@ -31,18 +34,43 @@ public partial class AssetBrowserControl : UserControl
         }
     }
 
-    private async void OnItemPointerPressed(object? sender, PointerPressedEventArgs e)
+    private void OnItemPointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        if (sender is Control control && control.DataContext is AssetItemViewModel item && !item.IsDirectory)
+        var properties = e.GetCurrentPoint(this).Properties;
+        if (properties.IsLeftButtonPressed && sender is Control control && control.DataContext is AssetItemViewModel item && !item.IsDirectory)
         {
-            var dragData = new DataObject();
-            // We can provide multiple formats: the view model, the path, or a generic "HierarchyItem" 
-            // if we want it to be compatible with our existing inspector drop zones
-            dragData.Set("AssetItem", item);
-            dragData.Set("HierarchyItem", item); // Map to HierarchyItem for Inspector compatibility
-            dragData.Set(DataFormats.Files, new[] { item.FullPath });
+            _dragStartPoint = e.GetPosition(this);
+            _isPointerPressed = true;
+        }
+    }
 
-            await DragDrop.DoDragDrop(e, dragData, DragDropEffects.Copy | DragDropEffects.Move);
+    private void OnItemPointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        _isPointerPressed = false;
+    }
+
+    private async void OnItemPointerMoved(object? sender, PointerEventArgs e)
+    {
+        if (!_isPointerPressed) return;
+
+        var currentPoint = e.GetPosition(this);
+        var diff = currentPoint - _dragStartPoint;
+
+        // Start drag only if moved beyond threshold (3 pixels)
+        if (System.Math.Abs(diff.X) > 3 || System.Math.Abs(diff.Y) > 3)
+        {
+            _isPointerPressed = false;
+
+            if (sender is Control control && control.DataContext is AssetItemViewModel item)
+            {
+                var dragData = new DataObject();
+                dragData.Set("AssetItem", item);
+                dragData.Set("HierarchyItem", item);
+                dragData.Set(DataFormats.Files, new[] { item.FullPath });
+
+                await DragDrop.DoDragDrop(e, dragData, DragDropEffects.Copy | DragDropEffects.Move);
+            }
         }
     }
 }
+

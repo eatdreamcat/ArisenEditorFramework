@@ -10,7 +10,7 @@ namespace ArisenEditorFramework.Utilities;
 
 public static class ControlsFactory
 {
-    public static string CustomMenuItem = Guid.NewGuid().ToString();
+    public const string CustomMenuItem = "__custom_menu_items__";
     public static string[] InternalHeaderMenus = new string[]
     {
         "File",
@@ -109,13 +109,15 @@ public static class ControlsFactory
                                 parent.children.Add(key);
                             }
 
+                            bool isLeaf = (i == menuHierarchies.Length - 1);
                             parent = new MenuItemNode()
                             {
                                 Header = childKey,
                                 children = new List<string>(),
-                                MethodInfo = methodInfo,
+                                // Only assign MethodInfo to leaf nodes to avoid intermediate nodes stealing callbacks.
+                                MethodInfo = isLeaf ? methodInfo : null,
                                 level = i,
-                                seperator = attribute.seperator
+                                seperator = attribute.separator
                             };
                             itemNodes.Add(key, parent);
                         }
@@ -303,6 +305,16 @@ public static class ControlsFactory
 
         childItem.Click += (object? sender, RoutedEventArgs? e) =>
         {
+            if (!methodInfo.IsStatic)
+            {
+                // Instance methods cannot be invoked without a target instance.
+                // Log a warning instead of crashing with TargetException.
+                _ = MessageBoxUtility.ShowMessageBoxStandard("Warning",
+                    $"MenuItem '{childNode.Header}' is bound to instance method '{methodInfo.DeclaringType?.Name}.{methodInfo.Name}'. " +
+                    "Only static methods are supported for [MenuItem] callbacks.");
+                return;
+            }
+
             var parameters = methodInfo.GetParameters();
             if (parameters.Length <= 0)
             {
