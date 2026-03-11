@@ -25,22 +25,11 @@ public static class FileSystemUtilities
             };
 
             var owner = desktop.MainWindow;
-            bool createdWindow = false;
             
-            // If No MainWindow exists (e.g. during startup), we need a temporary window to host the picker.
             if (owner == null)
             {
-                owner = new Window() 
-                { 
-                    Opacity = 0, 
-                    Width = 1, 
-                    Height = 1, 
-                    WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                    SystemDecorations = SystemDecorations.None,
-                    ShowInTaskbar = false
-                };
-                owner.Show();
-                createdWindow = true;
+                // To safely open a native dialog, a valid Window must exist to act as the owner.
+                return new List<string>();
             }
 
             try 
@@ -48,12 +37,9 @@ public static class FileSystemUtilities
                 var selected = await owner.StorageProvider.OpenFolderPickerAsync(options);
                 return selected?.Select(v => v.Path.LocalPath).ToList() ?? new List<string>();
             }
-            finally 
+            catch (Exception)
             {
-                if (createdWindow) 
-                {
-                    owner.Close();
-                }
+                return new List<string>();
             }
         }
 
