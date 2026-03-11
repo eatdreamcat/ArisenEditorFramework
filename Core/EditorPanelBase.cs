@@ -1,5 +1,6 @@
 using System;
 using Avalonia.Controls;
+using ReactiveUI;
 
 namespace ArisenEditorFramework.Core;
 
@@ -7,7 +8,7 @@ namespace ArisenEditorFramework.Core;
 /// A base class for editor panels that provides standard windowing behavior.
 /// Implements IDisposable for resource cleanup when panels are closed.
 /// </summary>
-public abstract class EditorPanelBase : IEditorPanel, IDisposable
+public abstract class EditorPanelBase : ReactiveObject, IEditorPanel, IDisposable
 {
     public abstract string Title { get; }
     public abstract string Id { get; }

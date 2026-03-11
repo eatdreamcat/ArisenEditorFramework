@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using ArisenEditorFramework.Core;
 using ReactiveUI;
 
 namespace ArisenEditorFramework.Inspector;
@@ -11,8 +12,12 @@ namespace ArisenEditorFramework.Inspector;
 /// The main ViewModel for the Property Grid component.
 /// Set the TargetObject to automatically generate UI layouts via Reflection.
 /// </summary>
-public class InspectorViewModel : ReactiveObject
+public class InspectorViewModel : EditorPanelBase
 {
+    public override string Title => "Inspector";
+    public override string Id => "Inspector";
+    public override object Content => new InspectorControl { DataContext = this };
+
     private object? _targetObject;
 
     public ObservableCollection<InspectorCategoryViewModel> Categories { get; } = new();

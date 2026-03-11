@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ArisenEditorFramework.Core;
 using Dock.Avalonia.Controls;
 using Dock.Model.Controls;
 using Dock.Model.Core;
@@ -17,6 +18,13 @@ internal class ArisenDockFactory : Factory
 {
     private IRootDock? _rootDock;
     private readonly LayoutManager _layoutManager;
+    private IPanelFactory? _panelFactory;
+
+    public IPanelFactory? PanelFactory
+    {
+        get => _panelFactory;
+        set => _panelFactory = value;
+    }
 
     public ArisenDockFactory(LayoutManager layoutManager)
     {
@@ -31,6 +39,8 @@ internal class ArisenDockFactory : Factory
         var inspector = new ToolDocument { Id = "Inspector", Title = "Inspector" };
         var console = new ToolDocument { Id = "Console", Title = "Console" };
         var assets = new ToolDocument { Id = "Assets", Title = "Assets" };
+        var scene = new ToolDocument { Id = "Scene", Title = "Scene" };
+        var gameView = new ToolDocument { Id = "GameView", Title = "Game" };
 
         IDockable content;
 
@@ -105,7 +115,7 @@ internal class ArisenDockFactory : Factory
                 (
                     new ToolDock { Id = "LeftPane", Proportion = 0.2, ActiveDockable = hierarchy, VisibleDockables = CreateList<IDockable>(hierarchy) },
                     new ProportionalDockSplitter(),
-                    new ToolDock { Id = "CenterPane", Proportion = 0.6, ActiveDockable = viewport, VisibleDockables = CreateList<IDockable>(viewport) },
+                    new ToolDock { Id = "CenterPane", Proportion = 0.6, ActiveDockable = scene, VisibleDockables = CreateList<IDockable>(scene, gameView, viewport) },
                     new ProportionalDockSplitter(),
                     new ToolDock { Id = "RightPane", Proportion = 0.2, ActiveDockable = inspector, VisibleDockables = CreateList<IDockable>(inspector) }
                 )
@@ -143,10 +153,18 @@ internal class ArisenDockFactory : Factory
 
     public override void InitLayout(IDockable layout)
     {
-        ContextLocator = new Dictionary<string, Func<object?>>
+        ContextLocator = new Dictionary<string, Func<object?>>();
+
+        if (_panelFactory != null)
         {
-            // Context locator maps window IDs to actual contents.
-        };
+            foreach (var id in _panelFactory.GetAvailablePanelIds())
+            {
+                // We map the ID to the Content of the IEditorPanel.
+                // Note: In a pure MVVM setup, this might be the ViewModel, but here AEF defines 
+                // IEditorPanel where .Content is typically the View or a Root ViewModel.
+                ContextLocator[id] = () => _panelFactory.CreatePanel(id).Content;
+            }
+        }
 
         HostWindowLocator = new Dictionary<string, Func<IHostWindow?>>
         {

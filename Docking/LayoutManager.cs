@@ -6,6 +6,7 @@ using Dock.Model.Controls;
 using Dock.Model.Core;
 using Dock.Model.Mvvm.Controls;
 using Dock.Serializer;
+using ArisenEditorFramework.Core;
 
 namespace ArisenEditorFramework.Docking;
 
@@ -19,6 +20,12 @@ public class LayoutManager : IEditorLayoutService
 
     public IFactory Factory => _factory;
     public IRootDock? Layout => _layout;
+
+    public IPanelFactory? PanelFactory
+    {
+        get => _factory.PanelFactory;
+        set => _factory.PanelFactory = value;
+    }
 
     public LayoutManager()
     {
