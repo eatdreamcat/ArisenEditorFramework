@@ -10,7 +10,7 @@ public class LogService : ILogService
 
     public LogService(string logFileName)
     {
-        string logDir = AppContext.BaseDirectory;
+        string logDir = Path.Combine(AppContext.BaseDirectory, "logs");
         _logFilePath = Path.Combine(logDir, logFileName);
         
         // Start fresh log session
