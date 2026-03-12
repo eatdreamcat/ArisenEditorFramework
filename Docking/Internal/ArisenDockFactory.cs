@@ -34,7 +34,6 @@ internal class ArisenDockFactory : Factory
     public IRootDock CreateLayout(string preset = "Default")
     {
         var toolbar = new ToolDocument { Id = "Toolbar", Title = "Toolbar" };
-        var viewport = new ToolDocument { Id = "Viewport", Title = "Viewport" };
         var hierarchy = new ToolDocument { Id = "Hierarchy", Title = "Hierarchy" };
         var inspector = new ToolDocument { Id = "Inspector", Title = "Inspector" };
         var console = new ToolDocument { Id = "Console", Title = "Console" };
@@ -63,7 +62,7 @@ internal class ArisenDockFactory : Factory
                         (
                             new ToolDock { Id = "LeftPane", Proportion = 0.15, ActiveDockable = hierarchy, VisibleDockables = CreateList<IDockable>(hierarchy) },
                             new ProportionalDockSplitter(),
-                            new ToolDock { Id = "CenterPane", Proportion = 0.5, ActiveDockable = viewport, VisibleDockables = CreateList<IDockable>(viewport) },
+                            new ToolDock { Id = "CenterPane", Proportion = 0.6, ActiveDockable = scene, VisibleDockables = CreateList<IDockable>(scene, gameView) },
                             new ProportionalDockSplitter(),
                             new ToolDock { Id = "BottomPane", Proportion = 0.2, ActiveDockable = assets, VisibleDockables = CreateList<IDockable>(console, assets) },
                             new ProportionalDockSplitter(),
@@ -84,7 +83,7 @@ internal class ArisenDockFactory : Factory
                 (
                     new ToolDock { Id = "ToolbarPane", Proportion = 0.05, ActiveDockable = toolbar, VisibleDockables = CreateList<IDockable>(toolbar) },
                     new ProportionalDockSplitter(),
-                    new ToolDock { Id = "CenterPane", Proportion = 0.4, ActiveDockable = viewport, VisibleDockables = CreateList<IDockable>(viewport) },
+                    new ToolDock { Id = "CenterPane", Proportion = 0.6, ActiveDockable = scene, VisibleDockables = CreateList<IDockable>(scene, gameView) },
                     new ProportionalDockSplitter(),
                     new ProportionalDock
                     {
@@ -115,7 +114,7 @@ internal class ArisenDockFactory : Factory
                 (
                     new ToolDock { Id = "LeftPane", Proportion = 0.2, ActiveDockable = hierarchy, VisibleDockables = CreateList<IDockable>(hierarchy) },
                     new ProportionalDockSplitter(),
-                    new ToolDock { Id = "CenterPane", Proportion = 0.6, ActiveDockable = scene, VisibleDockables = CreateList<IDockable>(scene, gameView, viewport) },
+                    new ToolDock { Id = "CenterPane", Proportion = 0.6, ActiveDockable = scene, VisibleDockables = CreateList<IDockable>(scene, gameView) },
                     new ProportionalDockSplitter(),
                     new ToolDock { Id = "RightPane", Proportion = 0.2, ActiveDockable = inspector, VisibleDockables = CreateList<IDockable>(inspector) }
                 )

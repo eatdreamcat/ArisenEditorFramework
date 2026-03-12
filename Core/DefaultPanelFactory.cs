@@ -13,7 +13,7 @@ public class DefaultPanelFactory : IPanelFactory
         _registry[id] = factory;
     }
 
-    public IEditorPanel CreatePanel(string panelId)
+    public virtual IEditorPanel CreatePanel(string panelId)
     {
         if (_registry.TryGetValue(panelId, out var factory))
         {
