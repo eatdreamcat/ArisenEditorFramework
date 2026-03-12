@@ -161,7 +161,7 @@ internal class ArisenDockFactory : Factory
                 // We map the ID to the Content of the IEditorPanel.
                 // Note: In a pure MVVM setup, this might be the ViewModel, but here AEF defines 
                 // IEditorPanel where .Content is typically the View or a Root ViewModel.
-                ContextLocator[id] = () => _panelFactory.CreatePanel(id).Content;
+                ContextLocator[id] = () => _panelFactory.CreatePanel(id);
             }
         }
 
