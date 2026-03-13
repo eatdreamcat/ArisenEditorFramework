@@ -9,9 +9,15 @@ public sealed class MenuItem : System.Attribute
 
     public string menuItem;
     public bool separator;
-    public MenuItem(string itemName, bool separator = false)
+    public string? icon;
+    public string? shortcut;
+    public int priority;
+    public MenuItem(string itemName, bool separator = false, string? icon = null, string? shortcut = null, int priority = 0)
     {
         this.menuItem = itemName;
         this.separator = separator;
+        this.icon = icon;
+        this.shortcut = shortcut;
+        this.priority = priority;
     }
 }
