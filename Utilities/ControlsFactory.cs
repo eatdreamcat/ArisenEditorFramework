@@ -14,7 +14,7 @@ public static class ControlsFactory
     {
         "File",
         "Edit",
-        "Contents",
+        "Content",
         "Entity",
         "Component",
         "GameObject", // Match design
@@ -199,17 +199,24 @@ public static class ControlsFactory
         for (int i = 0; i < InternalHeaderMenus.Length; ++i)
         {
             var header = InternalHeaderMenus[i];
-            if (itemNodes.TryGetValue(header, out var node))
-            {
-                var itemModel = CreateItemModel(itemNodes, node);
-                rootItems.Add(itemModel);
-            }
-            else if (header == CustomMenuItem)
+            if (header == CustomMenuItem)
             {
                 foreach (var userNode in userDefinedItems)
                 {
                     rootItems.Add(CreateItemModel(itemNodes, userNode));
                 }
+                continue;
+            }
+
+            if (itemNodes.TryGetValue(header, out var node))
+            {
+                var itemModel = CreateItemModel(itemNodes, node);
+                rootItems.Add(itemModel);
+            }
+            else
+            {
+                // Ensure predefined menus always show even if empty
+                rootItems.Add(new ArisenEditorFramework.Core.Models.MenuItemModel { Header = header });
             }
         }
         return rootItems;
