@@ -38,7 +38,7 @@ public class InspectorViewModel : EditorPanelBase
         }
     }
 
-    private void RebuildProperties()
+    protected virtual void RebuildProperties()
     {
         // Dispose existing property view models to unsubscribe event handlers and prevent leaks.
         foreach (var category in Categories)

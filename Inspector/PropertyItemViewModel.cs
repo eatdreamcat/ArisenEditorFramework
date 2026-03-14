@@ -12,56 +12,55 @@ namespace ArisenEditorFramework.Inspector;
 /// </summary>
 public class PropertyItemViewModel : ReactiveObject, IDisposable
 {
-    private readonly PropertyInfo _propertyInfo;
-    private readonly object _target;
-    private readonly PropertyChangedEventHandler? _targetPropertyChangedHandler;
+    protected readonly PropertyInfo? _propertyInfo;
+    protected readonly object _target;
+    private PropertyChangedEventHandler? _targetPropertyChangedHandler;
     private bool _disposed;
 
-    public string PropertyName { get; }
-    public string DisplayName { get; }
-    public string Description { get; }
-    public string Category { get; }
-    public Type PropertyType { get; }
+    public string PropertyName { get; protected set; }
+    public string DisplayName { get; protected set; }
+    public string Description { get; protected set; }
+    public string Category { get; protected set; }
+    public Type PropertyType { get; protected set; }
     
-    public bool IsReadOnly { get; }
+    public bool IsReadOnly { get; protected set; }
 
     /// <summary>
     /// Gets or sets the value of the property on the underlying object.
     /// Notifies the UI when changed.
     /// </summary>
-    public object? Value
+    public virtual object? Value
     {
-        get => _propertyInfo.GetValue(_target);
+        get => _propertyInfo?.GetValue(_target);
         set
         {
-            if (!IsReadOnly)
+            if (!IsReadOnly && _propertyInfo != null)
             {
                 // Simple attempt to convert if needed, e.g., string from a TextBox to numeric
-                object? convertedValue = value;
-                if (value != null && PropertyType != value.GetType())
-                {
-                    try
-                    {
-                        var converter = TypeDescriptor.GetConverter(PropertyType);
-                        if (converter.CanConvertFrom(value.GetType()))
-                        {
-                            convertedValue = converter.ConvertFrom(value);
-                        }
-                        else
-                        {
-                            convertedValue = Convert.ChangeType(value, PropertyType);
-                        }
-                    }
-                    catch
-                    {
-                        // Ignore conversion errors and just return (or log in a real system)
-                        return;
-                    }
-                }
-
+                object? convertedValue = TryConvert(value, PropertyType);
                 _propertyInfo.SetValue(_target, convertedValue);
                 this.RaisePropertyChanged(nameof(Value));
             }
+        }
+    }
+
+    protected object? TryConvert(object? value, Type targetType)
+    {
+        if (value == null || targetType == value.GetType())
+            return value;
+
+        try
+        {
+            var converter = TypeDescriptor.GetConverter(targetType);
+            if (converter.CanConvertFrom(value.GetType()))
+            {
+                return converter.ConvertFrom(value);
+            }
+            return Convert.ChangeType(value, targetType);
+        }
+        catch
+        {
+            return value; // Or log error
         }
     }
 
@@ -79,35 +78,39 @@ public class PropertyItemViewModel : ReactiveObject, IDisposable
         Description = string.Empty;
         Category = "Misc";
 
-        // Read attributes for metadata
-        var browsableAttributes = _propertyInfo.GetCustomAttributes(typeof(BrowsableAttribute), true);
-        if (browsableAttributes.Length > 0 && browsableAttributes[0] is BrowsableAttribute browsable)
-        {
-            if (!browsable.Browsable)
-            {
-                // This property wouldn't normally be here if browsable is false, handled by the parent
-            }
-        }
+        ApplyAttributes(_propertyInfo);
+        SubscribeToTarget();
+    }
 
-        var displayAttributes = _propertyInfo.GetCustomAttributes(typeof(DisplayNameAttribute), true);
+    protected PropertyItemViewModel(object target, string name, Type type, bool isReadOnly, string category = "Misc")
+    {
+        _target = target;
+        PropertyName = name;
+        DisplayName = name;
+        PropertyType = type;
+        IsReadOnly = isReadOnly;
+        Category = category;
+        Description = string.Empty;
+        SubscribeToTarget();
+    }
+
+    protected void ApplyAttributes(MemberInfo member)
+    {
+        var displayAttributes = member.GetCustomAttributes(typeof(DisplayNameAttribute), true);
         if (displayAttributes.Length > 0 && displayAttributes[0] is DisplayNameAttribute display)
-        {
             DisplayName = display.DisplayName;
-        }
 
-        var descriptionAttributes = _propertyInfo.GetCustomAttributes(typeof(DescriptionAttribute), true);
+        var descriptionAttributes = member.GetCustomAttributes(typeof(DescriptionAttribute), true);
         if (descriptionAttributes.Length > 0 && descriptionAttributes[0] is DescriptionAttribute desc)
-        {
             Description = desc.Description;
-        }
 
-        var categoryAttributes = _propertyInfo.GetCustomAttributes(typeof(CategoryAttribute), true);
+        var categoryAttributes = member.GetCustomAttributes(typeof(CategoryAttribute), true);
         if (categoryAttributes.Length > 0 && categoryAttributes[0] is CategoryAttribute cat)
-        {
             Category = cat.Category;
-        }
-        
-        // Subscribe to target's PropertyChanged using a stored handler so we can unsubscribe later.
+    }
+
+    private void SubscribeToTarget()
+    {
         if (_target is INotifyPropertyChanged npc)
         {
              _targetPropertyChangedHandler = (s, e) => {
