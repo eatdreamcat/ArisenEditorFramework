@@ -33,7 +33,7 @@ internal class ArisenDockFactory : Factory
 
     public IRootDock CreateLayout(string preset = "Default")
     {
-        var toolbar = new ToolDocument { Id = "Toolbar", Title = "Toolbar" };
+        var toolbar = new ToolDocument { Id = "Toolbar", Title = "Toolbar", CanFloat = false, CanClose = false, CanPin = false };
         var hierarchy = new ToolDocument { Id = "Hierarchy", Title = "Hierarchy" };
         var inspector = new ToolDocument { Id = "Inspector", Title = "Inspector" };
         var console = new ToolDocument { Id = "Console", Title = "Console" };
@@ -104,8 +104,8 @@ internal class ArisenDockFactory : Factory
         }
         else // Default
         {
-            var header = new ToolDocument { Id = "Header", Title = "Header" };
-            var footer = new ToolDocument { Id = "Footer", Title = "Footer" };
+            var header = new ToolDocument { Id = "Header", Title = "Header", CanFloat = false, CanClose = false, CanPin = false };
+            var footer = new ToolDocument { Id = "Footer", Title = "Footer", CanFloat = false, CanClose = false, CanPin = false };
 
             var mainLayout = new ProportionalDock
             {
@@ -130,15 +130,12 @@ internal class ArisenDockFactory : Factory
                 IsCollapsable = false,
                 VisibleDockables = CreateList<IDockable>
                 (
-                    new ToolDock { Id = "HeaderPane", Proportion = 0.04, ActiveDockable = header, VisibleDockables = CreateList<IDockable>(header) },
-                    new ProportionalDockSplitter(),
-                    new ToolDock { Id = "ToolbarPane", Proportion = 0.04, ActiveDockable = toolbar, VisibleDockables = CreateList<IDockable>(toolbar) },
-                    new ProportionalDockSplitter(),
+                    new ToolDock { Id = "HeaderPane", Proportion = 0.08, GripMode = GripMode.Hidden, ActiveDockable = header, VisibleDockables = CreateList<IDockable>(header) },
+                    new ToolDock { Id = "ToolbarPane", Proportion = 0.08, GripMode = GripMode.Hidden, ActiveDockable = toolbar, VisibleDockables = CreateList<IDockable>(toolbar) },
                     mainLayout,
                     new ProportionalDockSplitter(),
-                    new ToolDock { Id = "BottomPane", Proportion = 0.2, ActiveDockable = console, VisibleDockables = CreateList<IDockable>(console, assets) },
-                    new ProportionalDockSplitter(),
-                    new ToolDock { Id = "FooterPane", Proportion = 0.03, ActiveDockable = footer, VisibleDockables = CreateList<IDockable>(footer) }
+                    new ToolDock { Id = "BottomPane", Proportion = 0.17, ActiveDockable = console, VisibleDockables = CreateList<IDockable>(console, assets) },
+                    new ToolDock { Id = "FooterPane", Proportion = 0.03, GripMode = GripMode.Hidden, ActiveDockable = footer, VisibleDockables = CreateList<IDockable>(footer) }
                 )
             };
         }
