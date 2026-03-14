@@ -104,10 +104,13 @@ internal class ArisenDockFactory : Factory
         }
         else // Default
         {
+            var header = new ToolDocument { Id = "Header", Title = "Header" };
+            var footer = new ToolDocument { Id = "Footer", Title = "Footer" };
+
             var mainLayout = new ProportionalDock
             {
                 Id = "MainLayout",
-                Proportion = 0.7,
+                Proportion = 0.8,
                 Orientation = Orientation.Horizontal,
                 IsCollapsable = false,
                 VisibleDockables = CreateList<IDockable>
@@ -127,11 +130,15 @@ internal class ArisenDockFactory : Factory
                 IsCollapsable = false,
                 VisibleDockables = CreateList<IDockable>
                 (
-                    new ToolDock { Id = "ToolbarPane", Proportion = 0.05, ActiveDockable = toolbar, VisibleDockables = CreateList<IDockable>(toolbar) },
+                    new ToolDock { Id = "HeaderPane", Proportion = 0.04, ActiveDockable = header, VisibleDockables = CreateList<IDockable>(header) },
+                    new ProportionalDockSplitter(),
+                    new ToolDock { Id = "ToolbarPane", Proportion = 0.04, ActiveDockable = toolbar, VisibleDockables = CreateList<IDockable>(toolbar) },
                     new ProportionalDockSplitter(),
                     mainLayout,
                     new ProportionalDockSplitter(),
-                    new ToolDock { Id = "BottomPane", Proportion = 0.25, ActiveDockable = console, VisibleDockables = CreateList<IDockable>(console, assets) }
+                    new ToolDock { Id = "BottomPane", Proportion = 0.2, ActiveDockable = console, VisibleDockables = CreateList<IDockable>(console, assets) },
+                    new ProportionalDockSplitter(),
+                    new ToolDock { Id = "FooterPane", Proportion = 0.03, ActiveDockable = footer, VisibleDockables = CreateList<IDockable>(footer) }
                 )
             };
         }
