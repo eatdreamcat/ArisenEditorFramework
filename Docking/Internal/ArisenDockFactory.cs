@@ -38,6 +38,7 @@ internal class ArisenDockFactory : Factory
         var inspector = new ToolDocument { Id = "Inspector", Title = "Inspector" };
         var console = new ToolDocument { Id = "Console", Title = "Console" };
         var assets = new ToolDocument { Id = "Assets", Title = "Assets" };
+        var iconPreview = new ToolDocument { Id = "IconPreview", Title = "Icon Preview" };
         var scene = new ToolDocument { Id = "Scene", Title = "Scene" };
         var gameView = new ToolDocument { Id = "GameView", Title = "Game" };
 
@@ -134,7 +135,7 @@ internal class ArisenDockFactory : Factory
                     new ToolDock { Id = "ToolbarPane", Proportion = 0.08, GripMode = GripMode.Hidden, ActiveDockable = toolbar, VisibleDockables = CreateList<IDockable>(toolbar) },
                     mainLayout,
                     new ProportionalDockSplitter(),
-                    new ToolDock { Id = "BottomPane", Proportion = 0.17, ActiveDockable = console, VisibleDockables = CreateList<IDockable>(console, assets) },
+                    new ToolDock { Id = "BottomPane", Proportion = 0.17, ActiveDockable = console, VisibleDockables = CreateList<IDockable>(console, assets, iconPreview) },
                     new ToolDock { Id = "FooterPane", Proportion = 0.03, GripMode = GripMode.Hidden, ActiveDockable = footer, VisibleDockables = CreateList<IDockable>(footer) }
                 )
             };
