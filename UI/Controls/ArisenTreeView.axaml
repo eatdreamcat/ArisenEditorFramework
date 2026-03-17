@@ -55,6 +55,10 @@
         <Style Selector="TreeViewItem" x:DataType="hierarchy:IHierarchyItem">
             <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
         </Style>
+        <!-- Always show expander for branch nodes even if empty -->
+        <Style Selector="TreeViewItem:empty /template/ ToggleButton#PART_ExpandCollapseChevron" x:DataType="hierarchy:IHierarchyItem">
+            <Setter Property="IsVisible" Value="{Binding !IsLeaf}" />
+        </Style>
       </TreeView.Styles>
     </TreeView>
 </UserControl>
