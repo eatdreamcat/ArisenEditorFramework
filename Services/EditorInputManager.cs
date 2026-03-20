@@ -4,7 +4,10 @@ using Avalonia;
 using Avalonia.Input;
 using Avalonia.Controls;
 using Avalonia.VisualTree;
-using ArisenEditorFramework.Commands;
+using ArisenKernel.Contracts;
+using ArisenEngine.Core.ECS;
+using ArisenEngine.Core.Automation;
+using ArisenEngine.Rendering;
 
 namespace ArisenEditorFramework.Services;
 
@@ -15,12 +18,12 @@ public class EditorShortcut
     
     // Support either a generic ICommand or our dedicated EditorCommand (undoable)
     public System.Windows.Input.ICommand? Command { get; }
-    public Func<IEditorCommand>? EditorCommandFactory { get; }
+    public Func<ArisenKernel.Contracts.ICommand>? EditorCommandFactory { get; }
     
     public bool BypassTextInput { get; }
     public Func<bool>? ContextEvaluator { get; }
 
-    public EditorShortcut(Key key, KeyModifiers modifiers, Func<IEditorCommand> editorCommandFactory, bool bypassTextInput = false, Func<bool>? contextEvaluator = null)
+    public EditorShortcut(Key key, KeyModifiers modifiers, Func<ArisenKernel.Contracts.ICommand> editorCommandFactory, bool bypassTextInput = false, Func<bool>? contextEvaluator = null)
     {
         Key = key;
         Modifiers = modifiers;
@@ -103,7 +106,7 @@ public class EditorInputManager
                     var cmd = shortcut.EditorCommandFactory();
                     if (cmd != null)
                     {
-                        CommandHistory.Instance.Execute(cmd);
+                        ArisenKernel.Lifecycle.EngineKernel.Instance.Services.GetService<ICommandManager>()!.Execute(cmd);
                         e.Handled = true;
                         return;
                     }
@@ -118,3 +121,7 @@ public class EditorInputManager
         }
     }
 }
+
+
+
+

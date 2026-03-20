@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\ArisenKernel\ArisenKernel.csproj" />
     <ProjectReference Include="..\..\3rdparty\Ava.Dock\src\Dock.Avalonia\Dock.Avalonia.csproj" />
     <ProjectReference Include="..\..\3rdparty\Ava.Dock\src\Dock.Model.Mvvm\Dock.Model.Mvvm.csproj" />
     <ProjectReference Include="..\..\3rdparty\Ava.Dock\src\Dock.Model.ReactiveUI\Dock.Model.ReactiveUI.csproj" />
